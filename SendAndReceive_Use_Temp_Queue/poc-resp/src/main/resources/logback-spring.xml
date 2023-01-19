@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false">
+
+	<property name="kube-namespace" value="${KUBERNETES_NAMESPACE}" />
+	<property name="kube-podname" value="${KUBERNETES_PODNAME}" />
+	<property name="LOG_PATTERN" value="%m%n" />
+
+	<appender name="ConsoleAppenderRoot" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<timestamp/>
+				<pattern>
+					<pattern>
+						{
+						"kube_namespace": "${KUBERNETES_NAMESPACE:--}",
+						"kube_pod_name": "${KUBERNETES_PODNAME:--}",
+						"msg": "%message",
+						"line_number": "%line",
+						"class": "%class",
+						"log_level": "%level",
+						"logger_name": "%logger",
+						"thread_name":"%thread"
+						}
+					</pattern>
+				</pattern>
+				<stackTrace>
+					<fieldName>error_stacktrace</fieldName>
+				</stackTrace>
+			</providers>
+		</encoder>
+	</appender>
+	<appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	
+	<root level="info">
+		<appender-ref ref="ConsoleAppenderRoot" />
+	</root>
+	<logger name="LogDebug" level="info" additivity="false">
+		<appender-ref ref="ConsoleAppender" />
+	</logger>
+</configuration>
